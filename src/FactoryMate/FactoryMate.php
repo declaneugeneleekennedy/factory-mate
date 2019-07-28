@@ -87,30 +87,26 @@ class FactoryMate
         return $this->storage->forEachBy($className, $property, $value);
     }
 
-    public function create(string $className, array $attributes = [], $fn = null)
+    public function create(string $definitionName, array $attributes = [], $fn = null)
     {
-        $entity = $this->save($this->make($className, $attributes));
+        $entity = $this->save($this->make($definitionName, $attributes));
 
-        if ($entity && $fn && is_callable($fn)) {
-            return $fn($this, $entity);
-        }
-
-        return $entity;
+        return ($entity && $fn && is_callable($fn)) ? $fn($this, $entity) : $entity;
     }
 
-    public function seed(string $className, int $times, array $attributes = [], $fn = null): array
+    public function seed(int $times, string $definitionName, array $attributes = [], $fn = null): array
     {
         $entities = [];
         for ($i = 0; $i < $times; ++$i) {
-            $entities[] = $this->create($className, $attributes, $fn);
+            $entities[] = $this->create($definitionName, $attributes, $fn);
         }
 
         return $entities;
     }
 
-    protected function make(string $className, array $attributes = [])
+    protected function make(string $definitionName, array $attributes = [])
     {
-        $definition = $this->definitionFactory->getFor($className);
+        $definition = $this->definitionFactory->getFor($definitionName);
 
         $combinedAttributes = array_merge($definition->getDefaultAttributes(), $attributes);
 
@@ -122,16 +118,12 @@ class FactoryMate
         }
 
         $entity = $this->entityBuilder->build(
-            $className,
+            $definition->getEntityClassName(),
             $processedAttributes
         );
 
         $prepareCallback = $definition->getPrepareCallback();
 
-        if ($prepareCallback) {
-            return $prepareCallback($entity);
-        }
-
-        return $entity;
+        return ($prepareCallback) ? $prepareCallback($entity) : $entity;
     }
 }

@@ -2,7 +2,14 @@
 
 namespace DevDeclan\FactoryMate;
 
+use DevDeclan\FactoryMate\DefinitionFactory\DefinitionNotFoundExceptionInterface;
+
 interface DefinitionFactoryInterface
 {
-    public function getFor(string $className): DefinitionInterface;
+    /**
+     * @param string $definitionName
+     * @return DefinitionInterface
+     * @throws DefinitionNotFoundExceptionInterface
+     */
+    public function getFor(string $definitionName): DefinitionInterface;
 }

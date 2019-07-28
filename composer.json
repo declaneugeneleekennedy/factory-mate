@@ -7,16 +7,20 @@
         "test": "phpunit --bootstrap ./vendor/autoload.php test",
         "lint": "phpcs --standard=PSR2 src test",
         "coverage": "@test --coverage-text",
-        "coverage-html": "@test --coverage-html coverage"
-
+        "coverage-html": "@test --coverage-html coverage",
+        "coverage-xml": "@test --coverage-clover coverage.xml"
     },
     "autoload": {
         "psr-4": {
             "DevDeclan\\FactoryMate\\": "./src/FactoryMate"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "DevDeclan\\Test\\FactoryMate\\": "./test/FactoryMate"
+        }
+    },
     "require": {
-        "ext-redis": "*",
         "ext-json": "*",
         "psr/log": "*"
     },
@@ -24,5 +28,17 @@
         "phpunit/phpunit": "^6.5",
         "squizlabs/php_codesniffer": "3.*",
         "symfony/var-dumper": "^4.3"
+    },
+    "archive": {
+        "exclude": [
+            "/.codecov.yml",
+            "/docker-composer.yml",
+            "/Dockerfile",
+            "/Makefile",
+            "/phpunit.xml",
+            "/.circleci/",
+            "/docker/",
+            "/test/"
+        ]
     }
 }

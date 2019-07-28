@@ -1,1 +1,23 @@
-# Circle config goes here
+version: 2
+jobs:
+  build:
+    docker:
+      - image: php:7-cli-alpine
+        environment:
+          COMPOSER_ALLOW_SUPERUSER: 1
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "composer.lock" }}
+            - v1-dependencies-
+      - run: apk add --no-cache --update --virtual buildDeps g++ make autoconf composer bash curl
+      - run: pecl install xdebug && docker-php-ext-enable xdebug
+      - run: composer install -n --prefer-dist
+      - save_cache:
+          key: v1-dependencies-{{ checksum "composer.lock" }}
+          paths:
+            - ./vendor
+      - run: composer lint
+      - run: composer coverage-xml
+      - run: bash -c 'bash <(curl -s https://codecov.io/bash) -f ./coverage.xml -n ${CIRCLE_BUILD_NUM} -t ${CODECOV_TOKEN} -y .codecov.yml'

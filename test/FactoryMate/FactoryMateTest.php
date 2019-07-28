@@ -107,39 +107,6 @@ class FactoryMateTest extends TestCase
         $this->assertEquals($result, $this->instance->$method(...$args));
     }
 
-    public function testCreate()
-    {
-        $expectedEntity = new class() {
-            public $id = 1;
-
-            public $name = 'Cat';
-        };
-
-        $className = get_class($expectedEntity);
-
-        $definition = $this->prophesize(DefinitionInterface::class);
-
-        $definition->getDefaultAttributes()->willReturn(['name' => 'Cat']);
-
-        $definition->getPrepareCallback()->willReturn(function ($entity) {
-            return $entity;
-        });
-
-        $definition->getEntityClassName()->willReturn($className);
-
-        $this->definitionFactory->getFor($className)->willReturn($definition->reveal());
-
-        $this->storage->save($expectedEntity)->willReturn($expectedEntity);
-
-        $attributes = [
-            'id' => function () {
-                return 1;
-            },
-        ];
-
-        $this->assertEquals($expectedEntity, $this->instance->create($className, $attributes));
-    }
-
     public function testSeedAndThusCreatePlusMake()
     {
         $double = new class() {
@@ -209,7 +176,7 @@ class FactoryMateTest extends TestCase
 
         $this->assertEquals(
             [$entityOne, $entityTwo],
-            $this->instance->seed($className, 2, $attributes, $fn)
+            $this->instance->seed(2, $className, $attributes, $fn)
         );
     }
 }

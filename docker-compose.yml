@@ -3,8 +3,6 @@ services:
   factory-mate:
     build:
       context: .
-    depends_on:
-      - redis
     entrypoint: tail -f /dev/null
     working_dir: /usr/src/factory-mate
     environment:
@@ -13,12 +11,7 @@ services:
       COMPOSER_ALLOW_SUPERUSER: 1
     volumes:
       - .:/usr/src/factory-mate
-    networks:
-      - factory-mate
-  redis:
-    image: redis:alpine
-    ports:
-      - "6384:6379"
+      - ./docker/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
     networks:
       - factory-mate
 networks:
