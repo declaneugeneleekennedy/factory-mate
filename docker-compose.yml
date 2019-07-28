@@ -1,0 +1,26 @@
+version: '3'
+services:
+  factory-mate:
+    build:
+      context: .
+    depends_on:
+      - redis
+    entrypoint: tail -f /dev/null
+    working_dir: /usr/src/factory-mate
+    environment:
+      XDEBUG_CONFIG: remote_host=host.docker.internal
+      PHP_IDE_CONFIG: serverName=factory-mate.localhost
+      COMPOSER_ALLOW_SUPERUSER: 1
+    volumes:
+      - .:/usr/src/factory-mate
+    networks:
+      - factory-mate
+  redis:
+    image: redis:alpine
+    ports:
+      - "6384:6379"
+    networks:
+      - factory-mate
+networks:
+  factory-mate:
+    external: false
